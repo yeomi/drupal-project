@@ -14,19 +14,20 @@ use Symfony\Component\Filesystem\Filesystem;
 class GdScriptHandler extends ScriptHandler {
 
 
-  private static function createDirectories($dirs) {
+  private static function createDirectories($dirs, $parent = '/') {
 
     $fs = new Filesystem();
     $drupalFinder = new DrupalFinder();
     $drupalFinder->locateRoot(getcwd());
     $drupalRoot = $drupalFinder->getDrupalRoot();
+    $composerRoot = $drupalFinder->getComposerRoot();
 
     foreach ($dirs as $dir => $subDirs) {
-      if (!$fs->exists($drupalRoot . '/'. $dir)) {
-        $fs->mkdir($drupalRoot . '/'. $dir);
-        $fs->touch($drupalRoot . '/'. $dir . '/.gitkeep');
+      if (!$fs->exists($composerRoot . $parent . $dir)) {
+        $fs->mkdir($composerRoot . $parent . $dir);
+        $fs->touch($composerRoot . $parent . $dir . '/.gitkeep');
       }
-      self::createDirectories($subDirs);
+      self::createDirectories($subDirs, $parent . $dir . '/');
     }
   }
 
@@ -38,10 +39,12 @@ class GdScriptHandler extends ScriptHandler {
     $drupalFinder = new DrupalFinder();
     $drupalFinder->locateRoot(getcwd());
     $drupalRoot = $drupalFinder->getDrupalRoot();
+    $composerRoot = $drupalFinder->getComposerRoot();
 
     $dirs = [
       'private' => [],
       'temp' => [],
+      'doc' => [],
       'config' => [
         'dev' => [],
         'prod' => [],
@@ -53,12 +56,10 @@ class GdScriptHandler extends ScriptHandler {
 
     self::createDirectories($dirs);
 
-    if (!$fs->exists($drupalRoot . '/themes/custom/app_theme') && $fs->exists($drupalFinder->getComposerRoot() . '/vendor/php-packages/drupal8-theme')) {
-      $fs->mirror($drupalFinder->getComposerRoot() . '/vendor/php-packages/drupal8-theme', $drupalRoot . '/themes/custom/app_theme');
+    if (!$fs->exists($drupalRoot . '/themes/custom/app_theme') && $fs->exists($composerRoot . '/vendor/php-packages/drupal8-theme')) {
+      $fs->mirror($composerRoot . '/vendor/php-packages/drupal8-theme', $drupalRoot . '/themes/custom/app_theme');
       $event->getIO()->write("Created a starter app_theme");
     }
   }
-
-
 
 }
