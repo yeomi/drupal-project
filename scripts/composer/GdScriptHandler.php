@@ -2,16 +2,14 @@
 
 /**
  * @file
- * Contains \DrupalProject\composer\ScriptHandler.
+ * Contains \DrupalProject\composer\GdScriptHandler.
  */
 
 namespace DrupalProject\composer;
 
 use Composer\Script\Event;
-use Composer\Semver\Comparator;
 use DrupalFinder\DrupalFinder;
 use Symfony\Component\Filesystem\Filesystem;
-use Webmozart\PathUtil\Path;
 
 class GdScriptHandler extends ScriptHandler {
 
@@ -56,7 +54,8 @@ class GdScriptHandler extends ScriptHandler {
     self::createDirectories($dirs);
 
     if (!$fs->exists($drupalRoot . '/themes/custom/app_theme') && $fs->exists($drupalFinder->getComposerRoot() . '/vendor/php-packages/drupal8-theme')) {
-      $fs->copy($drupalFinder->getComposerRoot() . '/vendor/php-packages/drupal8-theme', $drupalRoot . '/themes/custom/app_theme');
+      $fs->mirror($drupalFinder->getComposerRoot() . '/vendor/php-packages/drupal8-theme', $drupalRoot . '/themes/custom/app_theme');
+      $event->getIO()->write("Created a starter app_theme");
     }
   }
 

@@ -46,6 +46,7 @@
     },
     "autoload": {
         "classmap": [
+            "scripts/composer/ScriptHandler.php",
             "scripts/composer/GdScriptHandler.php"
         ],
         "files": ["load.environment.php"]
