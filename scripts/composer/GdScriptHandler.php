@@ -60,6 +60,11 @@ class GdScriptHandler extends ScriptHandler {
       $fs->mirror($composerRoot . '/vendor/php-packages/drupal8-theme', $drupalRoot . '/themes/custom/app_theme');
       $event->getIO()->write("Created a starter app_theme");
     }
+
+    if (!$fs->exists($drupalRoot . '/modules/custom/app_core') && $fs->exists($composerRoot . '/vendor/php-packages/drupal8-core-module')) {
+      $fs->mirror($composerRoot . '/vendor/php-packages/drupal8-core-module', $drupalRoot . '/modules/custom/app_core');
+      $event->getIO()->write("Created a starter app_core");
+    }
   }
 
 }
